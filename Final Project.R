@@ -212,3 +212,29 @@ for( i in 1:nsims){
 }
 c(mean(sse1),mean(sse2))/(n-1000)
 c(summary(fit1)$sigma^2,summary(fit2)$sigma^2)
+
+
+RatingModel <- lm(data$W ~ ORtg + DRtg, data = data)
+summary(RatingModel)
+
+#checking linearity assumption
+plot(data$W ~ data$ORtg)
+plot(data$W ~ data$DRtg)
+
+#checking normality
+hist(data$ORtg)
+hist(data$DRtg)
+hist(data$NRtg)
+
+#checking for collinearity/highlighting all championship winning teams 
+#possible because all championship teams had unique values for ORtg
+plot(data$ORtg ~ data$DRtg, col=ifelse(data$ORtg %in% c(107.85, 109.15, 
+    110.29, 106.25, 103.18, 108.45, 109.53, 110.11, 111.10, 113.43, 
+    109.51, 110.24, 107.66, 113.43, 111.09, 112.18, 111.80, 116.26, 114.31),
+    "red", "black"), pch=ifelse(data$ORtg %in% c(107.85, 109.15, 110.29, 
+    106.25, 103.18, 108.45, 109.53, 110.11, 111.10, 113.43, 109.51, 110.24,
+    107.66, 113.43, 111.09, 112.18, 111.80, 116.26, 114.31), 8, 1), 
+xlab = "Defensive Rating", ylab = "Offensive Rating", 
+main = "Defensive Rating vs. Offensive Rating")
+abline(v = mean(data$DRtg), col="blue", lwd=1, lty=2)
+abline(h = mean(data$ORtg), col="blue", lwd=1, lty=2)
