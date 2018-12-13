@@ -1,90 +1,84 @@
----
-title: "stat_139_vyoshimura"
-output: pdf_document
----
-
-```{r, include=TRUE}
-
 # Load regular season game logs
-logs <- read.csv("NBA-2017-18-Regular-Season-Game-Logs.csv", header = TRUE)
-logs <- as.data.frame(logs)
+reg_logs <- read.csv("NBA-2017-18-Regular-Season-Game-Logs.csv")
+reg_logs <- as.data.frame(reg_logs)
 
 # Split game logs by team
-teamlogs <- split(logs, logs$TEAM)
+teamlogs <- split(reg_logs, reg_logs$TEAM)
 
 #rename variables
-colnames(logs)[9] <- "FGPct"
-colnames(logs)[10] <- "ThreePtMade"
-colnames(logs)[11] <- "ThreePtAtt"
-colnames(logs)[12] <- "ThreePtPct"
-colnames(logs)[15] <- "FtPct"
-colnames(logs)[24] <- "PlusMinus"
-colnames(logs)[25] <- "EffFGPct"
+colnames(reg_logs)[9] <- "FGPct"
+colnames(reg_logs)[10] <- "ThreePtMade"
+colnames(reg_logs)[11] <- "ThreePtAtt"
+colnames(reg_logs)[12] <- "ThreePtPct"
+colnames(reg_logs)[15] <- "FtPct"
+colnames(reg_logs)[24] <- "PlusMinus"
+colnames(reg_logs)[25] <- "EffFGPct"
 
 # Create a model stepwise
-model <- lm(logs$W ~ logs$OREB + logs$FGM + logs$FGA + logs$FGPct + logs$ThreePtMade + logs$ThreePtAtt + logs$ThreePtPct + logs$FTM + logs$FTA + logs$FtPct + logs$DREB + logs$AST + logs$STL + logs$BLK + logs$TOV + logs$PF + logs$EffFGPct, data = logs)
+model <- lm(reg_logs$W ~ reg_logs$OREB + reg_logs$FGM + reg_logs$FGA + reg_logs$FGPct + reg_logs$ThreePtMade + reg_logs$ThreePtAtt + reg_logs$ThreePtPct + reg_logs$FTM + reg_logs$FTA + reg_logs$FtPct + reg_logs$DREB + reg_logs$AST + reg_logs$STL + reg_logs$BLK + reg_logs$TOV + reg_logs$PF + reg_logs$EffFGPct, data = reg_logs)
 
 # step backwards model
 regular_step_backwards <- step(model)
 summary(regular_step_backwards)
 
 # step forwards model
-regular_step_forwards<-step(lm(W~1, data = logs), scope = X...~(OREB + FGM + FGA + FGPct + ThreePtMade + ThreePtMade + ThreePtAtt + ThreePtPct + FTM + FTA + FtPct + DREB +AST + STL + BLK + TOV + PF + EffFGPct), direction = "forward")
+regular_step_forwards<-step(lm(W~1, data = reg_logs), scope = X...~(OREB + FGM + FGA + FGPct + ThreePtMade + ThreePtMade + ThreePtAtt + ThreePtPct + FTM + FTA + FtPct + DREB +AST + STL + BLK + TOV + PF + EffFGPct), direction = "forward")
 
 #checking for normality of residuals
 qqnorm(resid(step))
 qqline(resid(step))
 
-#checking multicollinearity assumption in the game logs
-plot(logs$FGPct ~ logs$EffFGPct)
-plot(logs$FGPct ~ logs$FGA)
-plot(logs$FGPct ~ logs$FTM)
-plot(logs$FGPct ~ logs$FGM)
-plot(logs$FGPct ~ logs$ThreePtMade)
-plot(logs$FGPct ~ logs$DREB)
-plot(logs$FGPct ~ logs$ThreePtPct)
-plot(logs$STL ~ logs$BLK)
-plot(logs$AST ~ logs$FGM)
-plot(logs$OREB ~ logs$DREB)
-plot(logs$DREB ~ logs$ThreePtPct)
-plot(logs$AST ~ logs$EffFGPct)
-plot(logs$AST ~ logs$FGA)
-plot(logs$AST ~ logs$FTM)
-plot(logs$AST ~ logs$FGM)
-plot(logs$AST ~ logs$ThreePtMade)
-plot(logs$AST ~ logs$TOV)
-plot(logs$PF ~ logs$BLK)
-plot(logs$PF ~ logs$STL)
-plot(logs$PF ~ logs$DREB)
+#checking multicollinearity assumption in the game reg_logs
+plot(reg_logs$FGPct ~ reg_logs$EffFGPct)
+plot(reg_logs$FGPct ~ reg_logs$FGA)
+plot(reg_logs$FGPct ~ reg_logs$FTM)
+plot(reg_logs$FGPct ~ reg_logs$FGM)
+plot(reg_logs$FGPct ~ reg_logs$ThreePtMade)
+plot(reg_logs$FGPct ~ reg_logs$DREB)
+plot(reg_logs$FGPct ~ reg_logs$ThreePtPct)
+plot(reg_logs$STL ~ reg_logs$BLK)
+plot(reg_logs$AST ~ reg_logs$FGM)
+plot(reg_logs$OREB ~ reg_logs$DREB)
+plot(reg_logs$DREB ~ reg_logs$ThreePtPct)
+plot(reg_logs$AST ~ reg_logs$EffFGPct)
+plot(reg_logs$AST ~ reg_logs$FGA)
+plot(reg_logs$AST ~ reg_logs$FTM)
+plot(reg_logs$AST ~ reg_logs$FGM)
+plot(reg_logs$AST ~ reg_logs$ThreePtMade)
+plot(reg_logs$AST ~ reg_logs$TOV)
+plot(reg_logs$PF ~ reg_logs$BLK)
+plot(reg_logs$PF ~ reg_logs$STL)
+plot(reg_logs$PF ~ reg_logs$DREB)
 
 # Check normality assumption
-hist(logs$OREB, breaks = 20)
-hist(logs$FGM, breaks = 20)
-hist(logs$FGA, breaks = 20)
-hist(logs$FGPct, breaks = 20)
-hist(logs$ThreePtMade, breaks = 20)
-hist(logs$ThreePtAtt, breaks = 20)
-hist(logs$FTM, breaks = 20)
-hist(logs$FTA, breaks = 20)
-hist(logs$FtPct, breaks = 20)
-hist(logs$DREB, breaks = 20)
-hist(logs$AST, breaks = 20)
-hist(logs$STL, breaks = 20)
-hist(logs$BLK, breaks = 20)
-hist(logs$TOV, breaks = 20)
-hist(logs$PF, breaks = 20)
-hist(logs$EffFGPct, breaks = 20)
+hist(reg_logs$OREB, breaks = 20)
+hist(reg_logs$FGM, breaks = 20)
+hist(reg_logs$FGA, breaks = 20)
+hist(reg_logs$FGPct, breaks = 20)
+hist(reg_logs$ThreePtMade, breaks = 20)
+hist(reg_logs$ThreePtAtt, breaks = 20)
+hist(reg_logs$FTM, breaks = 20)
+hist(reg_logs$FTA, breaks = 20)
+hist(reg_logs$FtPct, breaks = 20)
+hist(reg_logs$DREB, breaks = 20)
+hist(reg_logs$AST, breaks = 20)
+hist(reg_logs$STL, breaks = 20)
+hist(reg_logs$BLK, breaks = 20)
+hist(reg_logs$TOV, breaks = 20)
+hist(reg_logs$PF, breaks = 20)
+hist(reg_logs$EffFGPct, breaks = 20)
 
 ######
 
 # Load 2000-2018 data
 data <- read.csv("NBA Seasons 2000-2018.csv", header=TRUE)
 
-# Create model stepwise for win percentage
+# Create model for win percentage
 model <- lm(data$W.L.~., data = data)
-#summary(model)
-#step <- step(model)
-#summary(step)
+summary(model)
+# compare model to stepwise model 
+step <- step(model)
+summary(step)
 
 # Run t-test to find if conference affects wins
 t.test(data$W.L.~data$Conf)
@@ -135,10 +129,7 @@ for (i in 1:19)
   names(year)[11] <- "MOV"
   names(year)[9] <- "ORtg"
   names(year)[8] <- "NRtg"
-  #names(year)[9] <- "MOV.A"
-  #names(year)[10] <- "ORtg.A"
   names(year)[10] <- "DRtg"
-  #names(year)[12] <- "NRtg.A"
   names(year)[22] <- "ThreeProp"
   names(year)[24] <- "eFG"
 
@@ -153,18 +144,17 @@ for (i in 1:19)
   
   # offensive rating
   O_Model <- lm(year$W.L~ -1 + year$ORtg)
-  coef[i] <- O_Model$coefficients[1]
+  coef[i] <- summary(O_Model)$coefficients[1]
   pval[i] <- summary(O_Model)$coefficients[1,4]
   
   # three point proportion
   O_Model1 <- lm(year$W.L.~ -1 + year$ThreeProp)
-  #intercept[i] <- O_Model$coefficients[]
-  coef1[i] <- O_Model1$coefficients[1]
+  coef1[i] <- summary(O_Model1)$coefficients[1]
   pval1[i] <- summary(O_Model1)$coefficients[1,4]
   
   # effective field goal percentage
   O_Model2 <- lm(year$W.L.~ -1 + year$eFG)
-  coef2[i] <- O_Model2$coefficients[1]
+  coef2[i] <- summary(O_Model2)$coefficients[1]
   pval2[i] <- summary(O_Model2)$coefficients[1,4]
 }
 
@@ -179,10 +169,8 @@ cbind(coef,pval)
 cbind(coef1,pval1)
 #compare coefficents for effective field goal percentage
 cbind(coef2,pval2)
-```
 
-```{r}
-# post season logs
+# post season reg_logs
 post <- read.csv("NBA-2017-18-Postseason-Game-Logs.csv", header = TRUE)
 #rename W/L response variable
 colnames(post)[4] <- "W"
@@ -196,7 +184,7 @@ summary(post_model)
 post_step_backward <- step(post_model)
 
 # start with full model and step up 
-post_step_forward<-step(lm(X...~1, data = logs), scope = X...~(PTS+FGM+ FGA+ FG.+ X3PM + X3PA+ FTM+FTA+FT.+OREB+DREB+REB+AST+STL+BLK+TOV+PF+EFG.), direction = "forward")
+post_step_forward<-step(lm(X...~1, data = post), scope = X...~(PTS+FGM+ FGA+ FG.+ X3PM + X3PA+ FTM+FTA+FT.+OREB+DREB+REB+AST+STL+BLK+TOV+PF+EFG.), direction = "forward")
 
 # compare forwards and backwards
 summary(post_step_backward)
@@ -205,28 +193,24 @@ summary(post_step_forward )
 # compare models for regular season and post season games
 summary(step)
 
-```
-
-
-```{r}
 # cross validation to compare post season and regular season
 # remove NA rows
-logs <- read.csv("NBA-2017-18-Regular-Season-Game-Logs.csv", header = TRUE)
-logs <- as.data.frame(logs)
+reg_logs <- read.csv("NBA-2017-18-Regular-Season-Game-Logs.csv", header = TRUE)
+reg_logs <- as.data.frame(reg_logs)
 
-logs <- logs[complete.cases(logs),]
+reg_logs <- reg_logs[complete.cases(reg_logs),]
 
 set.seed(2019)
 nsims = 1000
-n = nrow(logs)
+n = nrow(reg_logs)
 sse1 = sse2 = rep(NA,nsims)
 coef1 = matrix(NA, ncol = 18, nrow = nsims)
 coef2 = matrix(NA, ncol = 18, nrow = nsims)
 
 for( i in 1:nsims){
   reorder = sample(n)
-  train = logs[reorder[1:1000],]
-  test = logs[reorder[1001:n],]
+  train = reg_logs[reorder[1:1000],]
+  test = reg_logs[reorder[1001:n],]
   # fit1: from stepdown model from regular season games
   fit1 <- lm(W ~ OREB+FGM+FG.+X3PM+X3PA+X3P.+FTM+FTA+FT.+DREB+AST+STL+BLK+TOV+PF+EFG., data = train)
   # fit2: stepdown model from post season games
@@ -239,12 +223,6 @@ for( i in 1:nsims){
 }
 c(mean(sse1),mean(sse2))/(n-1000)
 c(summary(fit1)$sigma^2,summary(fit2)$sigma^2)
-
-```
-
-
-
-```{r}
 
 
 RatingModel <- lm(data$W ~ ORtg + DRtg, data = data)
@@ -271,7 +249,11 @@ xlab = "Defensive Rating", ylab = "Offensive Rating",
 main = "Defensive Rating vs. Offensive Rating")
 abline(v = mean(data$DRtg), col="blue", lwd=1, lty=2)
 abline(h = mean(data$ORtg), col="blue", lwd=1, lty=2)
+
+# compare coefficients for the Offensive rating
+cbind(coef,pval)
+#compare coefficents for three point proportion
+cbind(coef1,pval1)
+#compare coefficents for effective field goal percentage
+cbind(coef2,pval2)
 ```
-
-
-
